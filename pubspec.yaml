@@ -1,0 +1,19 @@
+name: tr_extension
+description: A no-InheritedWidget string translation through extension.
+version: 0.0.1
+homepage: https://wwww.branvier.com
+
+environment:
+  sdk: '>=2.17.0 <4.0.0'
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
