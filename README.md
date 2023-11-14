@@ -11,7 +11,7 @@ What sets this package apart is its no-InheritedWidget approach, making integrat
 ### 1. Set-up your .json files
 
 Put your `.json` files in the path: `assets/translations`.
-Ex: 'pt_BR.json'. Separators allowed: _ , - , + , . , / , | , \ and space.
+Ex: 'pt_BR.json'. Separators allowed:_ , - , + , . , / , | , \ and space.
 
 > The path can be changed with `Tr.setPath()`.
 > You can also use the extension `String.toLocale()`, available in this package.
@@ -47,18 +47,54 @@ For the below translations:
 `{'pt': {'form.invalid': 'Invalid field'}}`
 
 Will return:
-'form.invalid.email'.tr -> 'Invalid field'.
+`'form.invalid.email'.tr -> 'Invalid field'.`
 
 The pattern fallback:
 [.tr]: 'a.b.c' -> 'a.b' -> 'a' -> 'a.b.c'.
 [.trn]: 'a.b.c' -> 'a.b' -> 'a' -> null.
+
+## Dynamic Token Replacement
+
+Super simplification of arguments and pluralization!
+
+Suppose you have the json below:
+
+```json
+{
+  "user.items.0": "You have zero items :(",
+  "user.items.1": "You have exactly one item!",
+  "user.items.{}": "You have {} items!", // positional
+  "user.items.{}.{}": "{} have {} items!",
+  "user.items.{a}.{b}.{c}": "{c} may {b} this {a}", // named
+  "user.items.{c}.{}.{a}.{}": "I {} you {c} good {} the {a}", // mixed
+  "user.items": "You have items!",
+};
+```
+
+You can easily swap args in a smart combination of fallback matching:
+
+```dart
+  'user.items.0'.tr; // 'You have zero items :('
+  'user.items.1'.tr; // 'You have exactly one item!'
+  'user.items.${items.length}'.tr; // 'You have 2 items!'
+  'user.items.${user.name}.${items.length}'.tr; // 'Arthur have 3 items!'
+  'user.items.now.do.we'.tr; // 'we may do this now'
+  'user.items.dancefloor.bet.look.on'.tr // 'I bet you look good on the dancefloor'
+  'user.items'.tr; // 'You have items!'
+```
+
+Obs: You can't declare two keys with same args length. As the second one will override the first one, conflicting.
+
+```json
+  "user.items.{}.{}": ...,
+  "user.items.{a}.{b}": ...,
+```
 
 ### Control
 
 Use `Tr.to` to access the static instance of `Tr`
 
 ```dart
-
 ///Translates the desired key.
 Tr.to.translate(String key)
 
@@ -67,6 +103,9 @@ Tr.to.changeLanguage(Locale locale)
 
 ///Reloads all json files again, useful for reassembling (hot reload).
 Tr.to.reloadFiles()
+
+///Manually configures translations. Although we recommend using json files.
+Tr.to.putTranslations(Locale locale, Map translations)
 
 ```
 
