@@ -75,6 +75,7 @@ class Tr {
   ///Translation loader. Loads all if [_lazyLoad] = false.
   Future<void> _loadAll() async {
     await Future.wait(_localizedFiles.keys.map(_loadByLocale));
+    _refreshApp?.call();
   }
 
   ///Translation loader. Loads one if [_lazyLoad] = true.

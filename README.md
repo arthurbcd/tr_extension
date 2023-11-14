@@ -2,9 +2,8 @@
 # tr_extension
 
 tr_extension is a no-InheritedWidget package designed to simplify the process of localization within your apps.
-What sets this package apart is its no-InheritedWidget approach, making integration seamless and allowing developers to encapsulate packages into services with ease.
 
-## Features
+This package focus on achieving the simplest approach as possible, while being lightweight and straightforward.
 
 ## Getting started
 
@@ -41,17 +40,29 @@ Add '.tr' or '.trn' on any String and it will replace with the respective key/va
     Text('helloUniverse'.trn ?? 'other'); // print -> 'other'
 ```
 
-A Dot Pattern was added for smart fallback translation.
+## Fallback Pattern
+
+The fallback pattern will first try to translate the whole string, if not found, it will atempt to look for the next fallback pattern:
+
+- [.tr]: 'a.b.c' -> 'a.b' -> 'a' -> 'a.b.c'.
+- [.trn]: 'a.b.c' -> 'a.b' -> 'a' -> null.
 
 For the below translations:
-`{'pt': {'form.invalid': 'Invalid field'}}`
+
+```json
+{
+  "form.invalid": "This field in invalid",
+  "form.invalid.email": "Invalid email",
+};
+```
 
 Will return:
-`'form.invalid.email'.tr -> 'Invalid field'.`
 
-The pattern fallback:
-[.tr]: 'a.b.c' -> 'a.b' -> 'a' -> 'a.b.c'.
-[.trn]: 'a.b.c' -> 'a.b' -> 'a' -> null.
+```dart
+'form.invalid.email'.tr // 'Invalid email'.
+'form.invalid.name'.tr // 'This field in invalid'.
+'form.invalid'.tr // 'This field in invalid'.
+```
 
 ## Dynamic Token Replacement
 
@@ -90,7 +101,7 @@ Obs: You can't declare two keys with same args length. As the second one will ov
   "user.items.{a}.{b}": ...,
 ```
 
-### Control
+## Instance methods
 
 Use `Tr.to` to access the static instance of `Tr`
 
@@ -121,7 +132,7 @@ Tr.to.supportedLocales  //all supported locales
 
 ```
 
-### Additional information
+## Static methods
 
 Aditionally you can use some static methods for configuration:
 

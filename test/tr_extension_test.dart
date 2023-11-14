@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tr_extension/tr_extension.dart';
 
-import '../src/tr_extension.dart';
 
 void main() {
   group('strings', () {
@@ -65,8 +65,6 @@ void main() {
       expect(item6, 'You have items!');
     });
   });
-
-  //TODO: translate named args
 
   group('toLocale()', () {
     test('should return Locale _ object with two parts', () {

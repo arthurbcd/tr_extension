@@ -1,6 +1,6 @@
 name: tr_extension
-description: A no-InheritedWidget string translation through extension.
-version: 0.1.0
+description: A smart and lightweight string translation through extension.
+version: 0.1.2
 homepage: https://wwww.branvier.com
 
 environment:
