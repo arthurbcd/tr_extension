@@ -30,7 +30,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   ///
   factory TrDelegate({
     String path = 'assets/translations',
-    void Function(String message)? log = print,
+    void Function(String message)? log = _defaultLogger,
     bool reloadOnHotReload = true,
   }) {
     if (reloadOnHotReload && kDebugMode) {
@@ -40,6 +40,9 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
       .._path = path
       .._log = log;
   }
+
+  /// The default logger. Ex: `[tr]: message`.
+  static _defaultLogger(String message) => dev.log(message, name: 'tr');
 
   // Configs.
   String _path = 'assets/translations';
@@ -55,7 +58,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
 
   /// The current [Locale].
   Locale? get locale {
-    assert(_locale != null, 'Locale not found. Did you set TrDelegate()?');
+    assert(_locale != null, 'Locale not found. Did you set TrDelegate?');
     return _locale;
   }
 
@@ -68,15 +71,18 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   /// All supported [Locale] gotten from [_path] files or via [setTranslations].
   Set<Locale> get supportedLocales => _localizedFiles.keys.toSet();
 
-  /// Sintax-sugar for [TrDelegate] with flutter's [LocalizationsDelegate].
-  ///
-  /// Use this if you don't need to change the default configuration.
-  static List<LocalizationsDelegate> toList({
-    bool includeFlutterDelegates = true,
+  /// Returns [TrDelegate] with Flutter's [LocalizationsDelegate].
+  List<LocalizationsDelegate> toList({
+    bool includeFlutterLocalizations = true,
   }) {
-    return TrDelegate.instance.toList(
-      includeFlutterDelegates: includeFlutterDelegates,
-    );
+    return [
+      this,
+      if (includeFlutterLocalizations) ...[
+        GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+    ];
   }
 
   /// Puts new [Translations], overwriting existing ones.
@@ -88,14 +94,14 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   /// Sets the [Locale], effectively changing the language of the app.
   Future<void> setLocale(Locale locale) async {
     if (_locale == locale) return; //ignoring.
-    _print('[Tr]: Translation changed: $_locale -> $locale');
+    _print('Translation changed: $_locale -> $locale');
     _locale = locale;
 
     //Refresh UI.
     _refreshApp?.call();
 
     if (_refreshApp == null) {
-      _print('[Tr]: Currently running is read mode. In order to update the UI '
+      _print('Currently running is read mode. In order to update the UI '
           'while changing language, set context.locale on MaterialApp');
     }
 
@@ -110,8 +116,8 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
 
       final percent = (1 - (n / total.length)) * 100;
 
-      _print('[Tr]: There are $n missing keys. Progress: $percent%');
-      _print('[Tr]: Missing keys: $_missingTranslations');
+      _print('There are $n missing keys. Progress: $percent%');
+      _print('Missing keys: $_missingTranslations');
     });
   }
 
@@ -158,10 +164,10 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
         .where((key) => key.endsWith('.json'));
 
     if (files.isNotEmpty) {
-      _print('[Tr]: Translation files found: $files');
+      _print('Translation files found: $files');
     } else {
       _print(
-          '[Tr]: No translation files in $path. Did you declare this path on pubspec.yaml?');
+          'No translation files in $path. Did you declare this path on pubspec.yaml?');
     }
 
     for (final file in files) {
@@ -176,7 +182,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
     final file = _localizedFiles[locale];
 
     if (file == null) {
-      _print('[Tr]: Translation file not found for Locale: $locale');
+      _print('Translation file not found for Locale: $locale');
       return;
     }
 
@@ -195,7 +201,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
       final m2 = regex.allMatches(value).map((e) => e.group(0));
 
       if (!listEquals([...m1]..sort(), [...m2]..sort())) {
-        _print('[Tr]: Invalid token replacement: $key -> $value');
+        _print('Invalid token replacement: $key -> $value');
         return;
       }
 
@@ -271,20 +277,4 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
 
   @override
   bool shouldReload(LocalizationsDelegate old) => false;
-}
-
-extension TrDelegateExtension on TrDelegate {
-  /// Returns [TrDelegate] with Flutter's [LocalizationsDelegate].
-  List<LocalizationsDelegate> toList({
-    bool includeFlutterDelegates = true,
-  }) {
-    return [
-      this,
-      if (includeFlutterDelegates) ...[
-        GlobalWidgetsLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-    ];
-  }
 }

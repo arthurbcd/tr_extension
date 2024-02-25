@@ -1,5 +1,13 @@
 {
-    "helloWorld": "Olá Mundo",
-    "changeLanguage": "Mudar linguagem",
-    "bye": "Adeus"
+    "hello_world": "Olá Mundo!",
+    "change_language": "Mudar linguagem",
+    "user_title.{name}.male": "{name} concorre ao Oscar de Melhor Ator",
+    "user_title.{name}.female": "{name} concorre ao Oscar de Melhor Atriz",
+    "user_title.{name}": "{name} concorre ao Oscar de Melhor Ator/Atriz",
+    "user_description.male": "Ele é o favorito deste ano!",
+    "user_description.female": "Ela é a favorita deste ano!",
+    "user_description": "É a pessoa favorita deste ano!",
+    "user_oscars.{name}.0": "{name} ainda não ganhou nenhum Oscar",
+    "user_oscars.{name}.1": "Este é o primeiro Oscar de {name}.",
+    "user_oscars.{name}.{}": "{name} já ganhou {} Oscars."
 }

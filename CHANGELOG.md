@@ -2,7 +2,11 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.5.0 - Feb 25, 2023
+## 0.5.1 - Feb 25, 2023
+
+- Updated README.
+
+## 0.5.0 - Feb 24, 2023
 
 - Complete rewrite of the package setup configuration.
 - The package is now completely compatible with `Localizations` and `MaterialApp` widgets.

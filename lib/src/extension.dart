@@ -7,7 +7,7 @@ extension TrExtension on String {
     final translation = trn;
 
     if (translation == null) {
-      i._print('[Tr]: Missing translation: $this');
+      i._print('Missing translation: $this');
       i.missingTranslations.add(this);
     }
 
@@ -25,7 +25,7 @@ extension TrExtension on String {
     } else if (parts.length == 1) {
       return Locale(parts[0]);
     } else {
-      dev.log('[Tr]: invalid Locale: $this');
+      dev.log('Invalid Locale: $this');
       return Locale(this);
     }
   }

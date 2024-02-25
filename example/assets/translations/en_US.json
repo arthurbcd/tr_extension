@@ -1,4 +1,13 @@
 {
-    "helloWorld": "Hello World!",
-    "changeLanguage": "Change Language"
+    "hello_world": "Hello World!",
+    "change_language": "Change Language",
+    "user_title.{name}.male": "{name} is nominated for Best Actor",
+    "user_title.{name}.female": "{name} is nominated for Best Actress",
+    "user_title.{name}": "{name} is nominated for Best Actor/Actress",
+    "user_description.male": "He is the favorite this year!",
+    "user_description.female": "She is the favorite this year!",
+    "user_description": "They are the favorite this year!",
+    "user_oscars.{name}.0": "{name} still hasn't won an Oscar.",
+    "user_oscars.{name}.1": "This is {name}'s first Oscar!",
+    "user_oscars.{name}.{}": "{name} has won {} Oscars"
 }
