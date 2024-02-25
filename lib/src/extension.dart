@@ -3,24 +3,19 @@ part of '../tr_extension.dart';
 extension TrExtension on String {
   ///Translates this key. Pattern: 'a.b.c' -> 'a.b' -> 'a' -> this.
   String get tr {
-    final i = Tr.instance;
-    if (i._logger && i._translations.isEmpty) {
-      dev.log(
-        '[Tr]: 0 translations. Did you set Tr.localizationDelegate(s) on MaterialApp?',
-      );
-    }
+    final i = TrDelegate.instance;
     final translation = trn;
 
-    if (i._logger && translation == null) {
-      dev.log('[Tr]: Missing translation: $this');
-      i._missingTranslations.add(this);
+    if (translation == null) {
+      i._print('[Tr]: Missing translation: $this');
+      i.missingTranslations.add(this);
     }
 
     return translation ?? this;
   }
 
   ///Translates this key. Pattern: 'a.b.c' -> 'a.b' -> 'a' -> null.
-  String? get trn => Tr.to.translate(this);
+  String? get trn => TrDelegate.instance.translate(this);
 
   ///Converts this String to [Locale]. Separators: _ , - , + , . , / , | , \ and space.
   Locale toLocale() {
@@ -47,4 +42,46 @@ extension TrExtension on String {
 
     return nestedStrings.reversed.toList();
   } //tested [string_test]
+}
+
+VoidCallback? _refreshApp;
+
+extension TrContextExtension on BuildContext {
+  /// Change the language of the app, and sets the new locale.
+  void setLocale(Locale locale) {
+    final delegate = Localizations.of<TrDelegate>(this, TrDelegate);
+    assert(delegate != null, '''
+    TrDelegate not found. Did you set TrDelegate on MaterialApp.localizationDelegates?
+    ''');
+
+    delegate?.setLocale(locale);
+  }
+
+  /// Same as [Localizations.maybeLocaleOf].
+  ///
+  /// Setting this on [MaterialApp.locale] automatically enables state
+  /// management on [setLocale].
+  Locale? get locale {
+    final locale = Localizations.maybeLocaleOf(this);
+    if (locale != null) {
+      return locale;
+    }
+
+    // we capture only the context above the [MaterialApp]
+    _refreshApp = _rebuildAllChildren;
+    return TrDelegate.instance._locale;
+  }
+
+  /// See: https://stackoverflow.com/a/58513635/3411681
+  void _rebuildAllChildren() {
+    if (!mounted) return;
+
+    void rebuild(Element el) {
+      el.markNeedsBuild();
+      el.visitChildren(rebuild);
+    }
+
+    (this as Element).markNeedsBuild();
+    visitChildElements(rebuild);
+  }
 }

@@ -1,4 +1,5 @@
 {
     "helloWorld": "Olá Mundo",
-    "changeLanguage": "Mudar linguagem"
+    "changeLanguage": "Mudar linguagem",
+    "bye": "Adeus"
 }

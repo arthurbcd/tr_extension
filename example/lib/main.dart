@@ -2,28 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:tr_extension/tr_extension.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const App());
 }
 
-class MainApp extends StatefulWidget {
-  const MainApp({super.key});
-
-  @override
-  State<MainApp> createState() => _MainAppState();
-}
-
-class _MainAppState extends State<MainApp> {
-  @override
-  void reassemble() {
-    // usefull for adding new translations while hot reloading
-    Tr.to.reloadFiles();
-    super.reassemble();
-  }
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: context.localizationsDelegates,
+      localizationsDelegates: TrDelegate().toList(),
+      locale: context.locale,
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('pt', 'BR'),
+      ],
       home: const Home(),
     );
   }
@@ -47,13 +40,13 @@ class Home extends StatelessWidget {
             Text('helloWorld'.tr),
             ElevatedButton(
                 onPressed: () {
-                  final locale = Tr.to.locale == const Locale('pt', 'BR')
+                  final locale = context.locale == const Locale('pt', 'BR')
                       ? const Locale('en', 'US')
                       : const Locale('pt', 'BR');
 
-                  Tr.to.changeLanguage(locale);
+                  context.setLocale(locale);
                 },
-                child: Text('changeLanguage'.tr))
+                child: Text('bye'.tr))
           ],
         ),
       ),

@@ -12,17 +12,20 @@ This package focus on achieving the simplest approach as possible, while being l
 Put your `.json` files in the path: `assets/translations`.
 Ex: 'pt_BR.json'. Separators allowed:_ , - , + , . , / , | , \ and space.
 
-> The path can be changed with `Tr.setPath()`.
+> The path can be changed within `TrDelegate` factory constructor.
 > You can also use the extension `String.toLocale()`, available in this package.
 
 ### 2. Add the delagate and you are ready to go 🔥
 
 ```dart
 MaterialApp(
-    //with flutter_localizations
-    localizationDelegates: context.localizationDelegates,
-    //or just [context.trDelegate]
-    localizationDelegates: [context.trDelegate, ...others],
+  localizationsDelegates: TrDelegate(path: ...).toList(), // <- includes flutter_localizations
+  locale: context.locale, // <- auto state management
+  supportedLocales: const [
+    Locale('en', 'US'),
+    Locale('pt', 'BR'),
+  ],
+  home: const Home(),
 );
 ```
 
@@ -103,52 +106,23 @@ Obs: You can't declare two keys with same args length. As the second one will ov
 
 ## Instance methods
 
-Use `Tr.to` to access the static instance of `Tr`
+Use `TrDelegate.instance`.
 
 ```dart
-///Translates the desired key.
-Tr.to.translate(String key)
-
 ///Changes the language with the chosen [Locale].
-Tr.to.changeLanguage(Locale locale)
+TrDelegate.setLocale(Locale locale) // or context.setLocale(Locale locale)
 
-///Reloads all json files again, useful for reassembling (hot reload).
-Tr.to.reloadFiles()
-
-///Manually configures translations. Although we recommend using json files.
-Tr.to.putTranslations(Locale locale, Map translations)
-
+///Manually configures translations. Although we recommend using json files as described above.
+TrDelegate.setTranslations(Locale locale, Map translations)
 ```
 
 And the following getters:
 
 ```dart
-Tr.to.translations //all parsed translations
-Tr.to.missingTranslations //all missing translations
-Tr.to.translationFiles //all json files
-Tr.to.locale //the current locale
-Tr.to.fallback //the fallback locale
-Tr.to.supportedLocales  //all supported locales
+TrDelegate.translations //all parsed translations
+TrDelegate.missingTranslations //all missing translations
+TrDelegate.translationFiles //all json files
+TrDelegate.locale //the current locale
+TrDelegate.supportedLocales  //all supported locales
 
-```
-
-## Static methods
-
-Aditionally you can use some static methods for configuration:
-
-```dart
-  ///Changes default path. Default: 'assets/translations'.
-  Tr.setPath(String path)
-
-  ///The [Locale] the app starts. If null, use system's or fallback.
-  Tr.setInitial(Locale locale)
-
-  ///Changes default fallback. Default: 'en_US'.
-  Tr.setFallback(Locale locale)
-
-  ///Activates or desactivate log messages.
-  Tr.setLogger(bool isActive)
-
-  ///If true, load translations files only when changeLanguage is used. Defaults to false.
-  Tr.setLazyLoad(bool isLazy)
 ```

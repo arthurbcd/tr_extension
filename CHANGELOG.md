@@ -2,6 +2,18 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.5.0 - Feb 25, 2023
+
+- Complete rewrite of the package setup configuration.
+- The package is now completely compatible with `Localizations` and `MaterialApp` widgets.
+- Removed `Tr` class and all it's static methods.
+- Added `TrDelegate` factory constructor for configuration.
+- Added `toList()` to `TrDelegate` to include flutter localization delegate.
+- Added `context.locale` for state management.
+- Updated tests.
+- Updated README.
+- Updated example.
+
 ## 0.1.2 - Nov 14, 2023
 
 - Added example
