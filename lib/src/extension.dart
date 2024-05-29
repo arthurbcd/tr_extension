@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 part of '../tr_extension.dart';
 
 extension TrExtension on String {
@@ -83,5 +85,163 @@ extension TrContextExtension on BuildContext {
 
     (this as Element).markNeedsBuild();
     visitChildElements(rebuild);
+  }
+}
+
+extension TrDateTimeExtension on DateTime {
+  /// Formats this [DateTime] to a string using [locale] and [format].
+  ///
+  /// - s - Seconds.
+  /// - m - Minutes.
+  /// - j - Hours.
+  /// - d - Day.
+  /// - E - Weekday.
+  /// - M - Month.
+  /// - y - Year.
+  String format([
+    String? format,
+    Locale? locale,
+  ]) {
+    return DateFormat(format, locale?.toString()).format(this);
+  }
+
+  String d([Locale? locale]) => format('d', locale);
+  String E([Locale? locale]) => format('E', locale);
+  String EEEE([Locale? locale]) => format('EEEE', locale);
+  String LLL([Locale? locale]) => format('LLL', locale);
+  String LLLL([Locale? locale]) => format('LLLL', locale);
+  String M([Locale? locale]) => format('M', locale);
+  String Md([Locale? locale]) => format('Md', locale);
+  String MEd([Locale? locale]) => format('MEd', locale);
+  String MMM([Locale? locale]) => format('MMM', locale);
+  String MMMd([Locale? locale]) => format('MMMd', locale);
+  String MMMEd([Locale? locale]) => format('MMMEd', locale);
+  String MMMM([Locale? locale]) => format('MMMM', locale);
+  String MMMMd([Locale? locale]) => format('MMMMd', locale);
+  String MMMMEEEEd([Locale? locale]) => format('MMMMEEEEd', locale);
+  String QQQ([Locale? locale]) => format('QQQ', locale);
+  String QQQQ([Locale? locale]) => format('QQQQ', locale);
+  String y([Locale? locale]) => format('y', locale);
+  String yM([Locale? locale]) => format('yM', locale);
+  String yMd([Locale? locale]) => format('yMd', locale);
+  String yMEd([Locale? locale]) => format('yMEd', locale);
+  String yMMM([Locale? locale]) => format('yMMM', locale);
+  String yMMMd([Locale? locale]) => format('yMMMd', locale);
+  String yMMMEd([Locale? locale]) => format('yMMMEd', locale);
+  String yMMMM([Locale? locale]) => format('yMMMM', locale);
+  String yMMMMd([Locale? locale]) => format('yMMMMd', locale);
+  String yMMMMEEEEd([Locale? locale]) => format('yMMMMEEEEd', locale);
+  String yQQQ([Locale? locale]) => format('yQQQ', locale);
+  String yQQQQ([Locale? locale]) => format('yQQQQ', locale);
+  String H([Locale? locale]) => format('H', locale);
+  String Hm([Locale? locale]) => format('Hm', locale);
+  String Hms([Locale? locale]) => format('Hms', locale);
+  String j([Locale? locale]) => format('j', locale);
+  String jm([Locale? locale]) => format('jm', locale);
+  String jms([Locale? locale]) => format('jms', locale);
+}
+
+extension TrNumberStringExtension on String {
+  /// e.g. "1.2M" instead of "1,200,000".
+  String compact({
+    Locale? locale,
+    bool explicitSign = false,
+  }) {
+    return NumberFormat.compact(
+      locale: locale?.toString(),
+      explicitSign: explicitSign,
+    ).format(num.tryParse(this));
+  }
+
+  /// e.g. "USD1.2M" instead of "$1,200,000".
+  String compactCurrency({
+    Locale? locale,
+    String? name,
+    String? symbol,
+    int? decimalDigits,
+  }) {
+    return NumberFormat.compactCurrency(
+      locale: locale?.toString(),
+      name: name,
+      symbol: symbol,
+      decimalDigits: decimalDigits,
+    ).format(num.tryParse(this));
+  }
+
+  /// e.g. "1.2 million" instead of "1,200,000".
+  String compactLong({
+    Locale? locale,
+    bool explicitSign = false,
+  }) {
+    return NumberFormat.compactLong(
+      locale: locale?.toString(),
+      explicitSign: explicitSign,
+    ).format(num.tryParse(this));
+  }
+
+  /// e.g. "$1.2M" instead of "$1,200,000".
+  String compactSimpleCurrency({
+    Locale? locale,
+    String? name,
+    int? decimalDigits,
+  }) {
+    return NumberFormat.compactSimpleCurrency(
+      locale: locale?.toString(),
+      name: name,
+      decimalDigits: decimalDigits,
+    ).format(num.tryParse(this));
+  }
+
+  /// e.g. "USD1,200,000" for "1200000".
+  String currency({
+    Locale? locale,
+    String? name,
+    String? symbol,
+    int? decimalDigits,
+    String? customPattern,
+  }) {
+    return NumberFormat.currency(
+      locale: locale?.toString(),
+      name: name,
+      symbol: symbol,
+      decimalDigits: decimalDigits,
+      customPattern: customPattern,
+    ).format(num.tryParse(this));
+  }
+
+  /// e.g. "$1,200,000" for 1200000.
+  String simpleCurrency({
+    Locale? locale,
+    String? name,
+    int? decimalDigits,
+  }) {
+    return NumberFormat.simpleCurrency(
+      locale: locale?.toString(),
+      name: name,
+      decimalDigits: decimalDigits,
+    ).format(num.tryParse(this));
+  }
+
+  /// e.g. "1,200" for 1200.
+  String decimalPattern([
+    Locale? locale,
+  ]) {
+    return NumberFormat.decimalPattern(
+      locale?.toString(),
+    ).format(num.tryParse(this));
+  }
+
+  /// e.g. "120,000%" for 1200.
+  String percentPattern([Locale? locale]) {
+    return NumberFormat.percentPattern(
+      locale?.toString(),
+    ).format(num.tryParse(this));
+  }
+
+  /// e.g. "1.2E6" for 1200000.
+  String scientificPattern([Locale? locale]) {
+    return NumberFormat.scientificPattern(
+      locale?.toString(),
+    ).format(num.tryParse(this));
   }
 }

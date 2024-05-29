@@ -96,6 +96,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
     if (_locale == locale) return; //ignoring.
     _print('Translation changed: $_locale -> $locale');
     _locale = locale;
+    Intl.defaultLocale = locale.toString();
 
     //Refresh UI.
     _refreshApp?.call();
@@ -123,7 +124,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
 
   ///Translates [key]. Fallbacks to subkeys.
   String? translate(String key) {
-    final keys = key.subWords('.');
+    final keys = key.subWords(RegExp(r'\.(?!\s)'));
 
     //checking locale.
     var code = locale.toString();
@@ -142,7 +143,8 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
       final replacers = _translationsArgs[code]?[key];
 
       if (replacers != null && keys.first != key) {
-        final args = keys.first.replaceFirst('$key.', '').split('.');
+        final args =
+            keys.first.replaceFirst('$key.', '').split(RegExp(r'\.(?!\s)'));
         final replaced = replacers[args.length]?.call(args);
 
         if (replaced != null) return replaced; //found.
@@ -240,6 +242,8 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   Future<TrDelegate> load(Locale locale) async {
     final locales = await _loadLocales(_path);
     final hasLocale = locales.contains(_locale = locale);
+    Intl.defaultLocale = locale.toString();
+    
     if (hasLocale) {
       await _loadByLocale(locale);
     }

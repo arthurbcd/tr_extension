@@ -134,16 +134,9 @@ You can easily swap args in a smart combination of fallback matching:
   print('user_oscars.$name.$oscars'.tr); // 'This is Emma Stone's first Oscar!'
 ```
 
-Obs: You can't declare two keys with same args length. As the second one will override the first one, conflicting.
-
-```json
-  "user.items.{}.{}": ...,
-  "user.items.{a}.{b}": ...,
-```
-
 ## Instance methods
 
-Use `TrDelegate.instance` or `Localizations.of<TrDelegate>(this, TrDelegate)` to get the instance of the delegate.
+Use `TrDelegate.instance` or `Localizations.of<TrDelegate>(context, TrDelegate)` to get the instance of the delegate.
 
 ```dart
 ///Changes the language with the chosen [Locale].

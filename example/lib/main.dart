@@ -37,7 +37,10 @@ class Home extends StatelessWidget {
             /// these keys are located at:
             /// - assets/translations/en_US.json
             /// - assets/translations/pt_BR.json
-            Text('helloWorld'.tr),
+            Text('hello_world'.tr),
+            Text(DateTime.now().jms()),
+            Text('1200000000.4'.compactSimpleCurrency()),
+            Text('1200000000.4'.compactCurrency()),
             ElevatedButton(
                 onPressed: () {
                   final locale = context.locale == const Locale('pt', 'BR')
@@ -46,7 +49,7 @@ class Home extends StatelessWidget {
 
                   context.setLocale(locale);
                 },
-                child: Text('bye'.tr))
+                child: Text('change_language'.tr))
           ],
         ),
       ),

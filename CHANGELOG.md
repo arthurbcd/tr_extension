@@ -2,11 +2,23 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.5.1 - Feb 25, 2023
+## 0.6.0 - May 29, 2024
+
+- Added `Intl.defaultLocale` integration.
+- Added `DateTime` extensions for `DateFormat`
+- Added `String` extensions for `NumberFormat`.
+
+## 0.5.2 - Apr 30, 2024
+
+- Fixed conflicts when using '.' inside the translation argument.
+
+Thanks to `suamirochadev` for pointing this out.
+
+## 0.5.1 - Feb 25, 2024
 
 - Updated README.
 
-## 0.5.0 - Feb 24, 2023
+## 0.5.0 - Feb 24, 2024
 
 - Complete rewrite of the package setup configuration.
 - The package is now completely compatible with `Localizations` and `MaterialApp` widgets.

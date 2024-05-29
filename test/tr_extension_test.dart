@@ -65,6 +65,9 @@ void main() {
 
       final item6 = tr.translate('user.items');
       expect(item6, 'You have items!');
+
+      final item7 = tr.translate('user.items.Mr. Art.2');
+      expect(item7, 'Mr. Art have 2 items!');
     });
   });
 
