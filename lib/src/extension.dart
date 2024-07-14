@@ -89,6 +89,7 @@ extension TrContextExtension on BuildContext {
 }
 
 extension TrDateTimeExtension on DateTime {
+
   /// Formats this [DateTime] to a string using [locale] and [format].
   ///
   /// - s - Seconds.
@@ -102,7 +103,8 @@ extension TrDateTimeExtension on DateTime {
     String? format,
     Locale? locale,
   ]) {
-    return DateFormat(format, locale?.toString()).format(this);
+    final date = TrDelegate.instance.alwaysUseUtcFormat ? toUtc() : toLocal();
+    return DateFormat(format, locale?.toString()).format(date);
   }
 
   String d([Locale? locale]) => format('d', locale);

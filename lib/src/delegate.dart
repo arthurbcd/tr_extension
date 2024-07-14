@@ -32,13 +32,15 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
     String path = 'assets/translations',
     void Function(String message)? log = _defaultLogger,
     bool reloadOnHotReload = true,
+    bool alwaysUseUtcFormat = false,
   }) {
     if (reloadOnHotReload && kDebugMode) {
       instance.reload();
     }
     return instance
       .._path = path
-      .._log = log;
+      .._log = log
+      .._alwaysUseUtcFormat = alwaysUseUtcFormat;
   }
 
   /// The default logger. Ex: `[tr]: message`.
@@ -46,6 +48,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
 
   // Configs.
   String _path = 'assets/translations';
+  bool _alwaysUseUtcFormat = false;
   void Function(String message)? _log;
   void _print(String message) => _log?.call(message);
 
@@ -70,6 +73,9 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
 
   /// All supported [Locale] gotten from [_path] files or via [setTranslations].
   Set<Locale> get supportedLocales => _localizedFiles.keys.toSet();
+
+  /// Whether the date/time format should always be in UTC.
+  bool get alwaysUseUtcFormat => _alwaysUseUtcFormat;
 
   /// Returns [TrDelegate] with Flutter's [LocalizationsDelegate].
   List<LocalizationsDelegate> toList({

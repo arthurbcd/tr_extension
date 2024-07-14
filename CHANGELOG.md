@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.1 - Jun 06, 2024
+
+- Added `TrDelegate.alwaysUseUtcFormat`.
+
 ## 0.6.0 - May 29, 2024
 
 - Added `Intl.defaultLocale` integration.
