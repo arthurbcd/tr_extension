@@ -104,15 +104,9 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
     _locale = locale;
     Intl.defaultLocale = locale.toString();
 
-    //Refresh UI.
-    _refreshApp?.call();
+    await reload();
 
-    if (_refreshApp == null) {
-      _print('Currently running is read mode. In order to update the UI '
-          'while changing language, set context.locale on MaterialApp');
-    }
-
-    if (_log == null) return;
+    if (_log == null || !kDebugMode) return;
     Future(() {
       final total = <String>{};
       final n = _missingTranslations.length;
@@ -164,6 +158,8 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
 
   ///Load all locales from asset [path].
   Future<Set<Locale>> _loadLocales(String path) async {
+    if (_localizedFiles.isNotEmpty) return supportedLocales;
+
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
@@ -239,17 +235,28 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
     if (_reloading || _locale == null) return;
     _reloading = true;
 
-    await load(_locale!).then((_) => _refreshApp?.call()).whenComplete(() {
+    await _loadByLocale(_locale!)
+        .then((_) => _refreshApp?.call())
+        .whenComplete(() {
       WidgetsBinding.instance.addPostFrameCallback((_) => _reloading = false);
     });
+
+    if (_refreshApp == null) {
+      _print('Currently running is read mode. In order to update the UI '
+          'while changing language, set context.locale on MaterialApp');
+    } else {
+      _print('$_locale translations reloaded.');
+    }
   }
 
   @override
   Future<TrDelegate> load(Locale locale) async {
+    if (_locale == locale) return this;
+
     final locales = await _loadLocales(_path);
     final hasLocale = locales.contains(_locale = locale);
     Intl.defaultLocale = locale.toString();
-    
+
     if (hasLocale) {
       await _loadByLocale(locale);
     }

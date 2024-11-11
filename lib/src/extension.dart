@@ -50,13 +50,13 @@ VoidCallback? _refreshApp;
 
 extension TrContextExtension on BuildContext {
   /// Change the language of the app, and sets the new locale.
-  void setLocale(Locale locale) {
+  Future<void> setLocale(Locale locale) async {
     final delegate = Localizations.of<TrDelegate>(this, TrDelegate);
     assert(delegate != null, '''
     TrDelegate not found. Did you set TrDelegate on MaterialApp.localizationDelegates?
     ''');
 
-    delegate?.setLocale(locale);
+    await delegate?.setLocale(locale);
   }
 
   /// Same as [Localizations.maybeLocaleOf].
@@ -89,7 +89,6 @@ extension TrContextExtension on BuildContext {
 }
 
 extension TrDateTimeExtension on DateTime {
-
   /// Formats this [DateTime] to a string using [locale] and [format].
   ///
   /// - s - Seconds.
