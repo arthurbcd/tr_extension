@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.7.1 - Nov 22, 2024
+
+- Expose cache in TrDelegate.reload.
+
 ## 0.7.0 - Nov 11, 2024
 
 - Now it's possible to await BuildContext.setLocale.

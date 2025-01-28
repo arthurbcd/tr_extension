@@ -27,6 +27,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   /// - [path]: The path to the translations files.
   /// - [log]: A function to log messages.
   /// - [reloadOnHotReload]: If true, reloads all translations on hot reload.
+  /// - [alwaysUseUtcFormat]: If true, all date/time formats will be in UTC, ignoring the current locale.
   ///
   factory TrDelegate({
     String path = 'assets/translations',
@@ -35,7 +36,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
     bool alwaysUseUtcFormat = false,
   }) {
     if (reloadOnHotReload && kDebugMode) {
-      instance.reload();
+      instance.reload(cache: false);
     }
     return instance
       .._path = path
@@ -182,7 +183,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   }
 
   ///Translation loader. Loads one if [_lazyLoad] = true.
-  Future<void> _loadByLocale(Locale locale) async {
+  Future<void> _loadByLocale(Locale locale, {required bool cache}) async {
     final file = _localizedFiles[locale];
 
     if (file == null) {
@@ -190,7 +191,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
       return;
     }
 
-    final map = jsonDecode(await rootBundle.loadString(file));
+    final map = jsonDecode(await rootBundle.loadString(file, cache: cache));
     setTranslations(locale, Map.from(map));
   }
 
@@ -231,11 +232,11 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   var _reloading = false;
 
   /// Reloads all [Translations] of the current [locale].
-  Future<void> reload() async {
+  Future<void> reload({bool cache = true}) async {
     if (_reloading || _locale == null) return;
     _reloading = true;
 
-    await _loadByLocale(_locale!)
+    await _loadByLocale(_locale!, cache: cache)
         .then((_) => _refreshApp?.call())
         .whenComplete(() {
       WidgetsBinding.instance.addPostFrameCallback((_) => _reloading = false);
@@ -258,7 +259,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
     Intl.defaultLocale = locale.toString();
 
     if (hasLocale) {
-      await _loadByLocale(locale);
+      await _loadByLocale(locale, cache: true);
     }
     assert(
       hasLocale,
