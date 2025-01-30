@@ -2,6 +2,16 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.8.0 - Jan 30, 2025
+
+- Now you can setup `TrDelegate` as a list or element.
+- Added `context.tr` to access `TrDelegate`.
+- Added `context.supportedLocales` to access supported locales.
+- Now `setLocate` accepts nullable locale. Setting null will use system's locale.
+- Now `Tr.instance.locale` is non-nullable.
+- Remove `dart:collection` dependency.
+- Bump Flutter SDK to 3.0.0.
+
 ## 0.7.1 - Nov 22, 2024
 
 - Expose cache in TrDelegate.reload.

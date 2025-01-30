@@ -20,7 +20,7 @@ Add `tr_extension` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  tr_extension: ^0.5.1
+  tr_extension: ^0.8.0
 ```
 
 Add your translations folder path in your `pubspec.yaml`:
@@ -52,9 +52,12 @@ Each file should contain a map of key/value pairs. Where the key is the translat
 
 ### Setup app
 
+You can use TrDelegate() as list or as element. Using it as list will include flutter_localizations.
+
 ```dart
 MaterialApp(
-  localizationsDelegates: TrDelegate(path: ...).toList(), // <- includes flutter_localizations
+  localizationsDelegates: TrDelegate(), // <- has: flutter_localizations
+  // localizationsDelegates: [TrDelegate()], // <- has not: flutter_localizations
   locale: context.locale, // <- auto state management
   supportedLocales: const [
     Locale('en', 'US'),
@@ -63,8 +66,6 @@ MaterialApp(
   home: const Home(),
 );
 ```
-
-> 'flutter_localizations' delegates are included in `.toList()`.
 
 ## Usage
 
@@ -76,6 +77,26 @@ Add '.tr' or '.trn' on any String and it will replace with the respective key/va
 ```dart
     Text('helloWorld'.tr); // print -> 'Hello World!'
     Text('helloUniverse'.trn ?? 'other'); // print -> 'other'
+```
+
+Easily change the language with the chosen Locale with context extensions:
+- `context.tr` returns the `TrDelegate` instance. 
+- `context.locale` returns the current locale.
+- `context.supportedLocales` returns all supported locales.
+- `context.setLocale(Locale locale)` changes the current locale.
+
+```dart
+DropdownButtonFormField(
+  value: context.locale,
+  items: [
+    for (final locale in context.supportedLocales)
+      DropdownMenuItem(
+        value: locale,
+        child: Text(locale.toString()),
+      ),
+  ],
+  onChanged: context.setLocale,
+)
 ```
 
 ## Fallback Pattern
@@ -136,11 +157,11 @@ You can easily swap args in a smart combination of fallback matching:
 
 ## Instance methods
 
-Use `TrDelegate.instance` or `Localizations.of<TrDelegate>(context, TrDelegate)` to get the instance of the delegate.
+Use `TrDelegate.instance` or `context.tr` to get the instance of the delegate.
 
 ```dart
 ///Changes the language with the chosen [Locale].
-.setLocale(Locale locale) // or context.setLocale(Locale locale)
+.setLocale(Locale locale)
 
 ///Manually configures translations. Although we recommend using json files as described above.
 .setTranslations(Locale locale, Map translations)
@@ -154,5 +175,4 @@ And the following getters:
 .translationFiles //all json files
 .locale //the current locale
 .supportedLocales  //all supported locales
-
 ```

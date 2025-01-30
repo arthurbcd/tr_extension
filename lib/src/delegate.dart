@@ -17,7 +17,8 @@ part of '../tr_extension.dart';
 ///
 /// [.trn] Pattern: 'a.b.c' -> 'a.b' -> 'a' -> null.
 ///
-class TrDelegate extends LocalizationsDelegate<TrDelegate> {
+class TrDelegate extends ListBase<LocalizationsDelegate>
+    implements LocalizationsDelegate<TrDelegate> {
   /// The instance of [TrDelegate].
   static final instance = TrDelegate._();
   TrDelegate._();
@@ -61,9 +62,9 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   final _localizedFiles = <Locale, String>{};
 
   /// The current [Locale].
-  Locale? get locale {
+  Locale get locale {
     assert(_locale != null, 'Locale not found. Did you set TrDelegate?');
-    return _locale;
+    return _locale!;
   }
 
   /// All translations loaded.
@@ -78,20 +79,6 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   /// Whether the date/time format should always be in UTC.
   bool get alwaysUseUtcFormat => _alwaysUseUtcFormat;
 
-  /// Returns [TrDelegate] with Flutter's [LocalizationsDelegate].
-  List<LocalizationsDelegate> toList({
-    bool includeFlutterLocalizations = true,
-  }) {
-    return [
-      this,
-      if (includeFlutterLocalizations) ...[
-        GlobalWidgetsLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-    ];
-  }
-
   /// Puts new [Translations], overwriting existing ones.
   void setTranslations(Locale locale, Map<String, String> map) {
     _translations[locale.toString()] = map;
@@ -99,7 +86,11 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
   }
 
   /// Sets the [Locale], effectively changing the language of the app.
-  Future<void> setLocale(Locale locale) async {
+  ///
+  /// If [locale] is null, it will use the system locale.
+  Future<void> setLocale(Locale? locale) async {
+    locale ??= Intl.systemLocale.toLocale();
+
     if (_locale == locale) return; //ignoring.
     _print('Translation changed: $_locale -> $locale');
     _locale = locale;
@@ -132,7 +123,7 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
     final hasCode = _translations.keys.contains(locale.toString());
     if (!hasCode) {
       final languages = _translations.keys.where(
-        (key) => key.startsWith(locale!.languageCode),
+        (key) => key.startsWith(locale.languageCode),
       );
       if (languages.isNotEmpty) {
         code = languages.first;
@@ -270,8 +261,8 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
       Make sure to set the supportedLocales on MaterialApp:
 
       MaterialApp(
-        localizationsDelegates: TrDelegate().toList(), // <- config
-        locale: const Locale('pt', 'BR'), <- initial locale
+        localizationsDelegates: TrDelegate(), // <- config
+        locale: context.locale, <- current locale
         supportedLocales: const [
           Locale('en', 'US'), <- supported locales
           Locale('pt', 'BR'),
@@ -295,4 +286,30 @@ class TrDelegate extends LocalizationsDelegate<TrDelegate> {
 
   @override
   bool shouldReload(LocalizationsDelegate old) => false;
+
+  @override
+  Type get type => TrDelegate;
+
+  @override
+  String toString() =>
+      '${objectRuntimeType(this, 'LocalizationsDelegate')}[$type]';
+
+  @override
+  int get length => _delegates.length;
+
+  @override
+  set length(int newLength) => _delegates.length = newLength;
+
+  @override
+  operator [](int index) => _delegates[index];
+
+  @override
+  void operator []=(int index, value) => _delegates[index] = value;
+
+  late final _delegates = <LocalizationsDelegate>[
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    this,
+  ];
 }
