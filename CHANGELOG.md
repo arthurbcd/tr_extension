@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.9.1 - Fev 05, 2025
+
+- Force args translation when manually set.
+
 ## 0.9.0 - Fev 04, 2025
 
 - Added `args` parameter to `TrDelegate.translate`.

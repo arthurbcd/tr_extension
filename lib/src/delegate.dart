@@ -142,7 +142,12 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
         if (replaced != null) return replaced; //found.
       }
 
-      final translation = _translations[code]?[key];
+      var translation = _translations[code]?[key];
+
+      for (final arg in args ?? []) {
+        translation = translation?.replaceFirst(RegExp(r'\{.*?\}'), arg);
+      }
+
       if (translation != null) return translation; //found.
     }
     return null; //not found.
