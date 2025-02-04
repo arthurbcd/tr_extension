@@ -3,23 +3,39 @@
 part of '../tr_extension.dart';
 
 extension TrExtension on String {
-  ///Translates this key. Pattern: 'a.b.c' -> 'a.b' -> 'a' -> this.
+  /// Translates this key. Pattern: 'a.b.c' -> 'a.b' -> 'a' -> this.
   String get tr {
-    final i = TrDelegate.instance;
     final translation = trn;
 
     if (translation == null) {
-      i._print('Missing translation: $this');
-      i.missingTranslations.add(this);
+      TrDelegate.instance._print('Missing translation: $this');
+      TrDelegate.instance.missingTranslations.add(this);
     }
 
     return translation ?? this;
   }
 
-  ///Translates this key. Pattern: 'a.b.c' -> 'a.b' -> 'a' -> null.
+  /// Translates this key. Pattern: 'a.b.c' -> 'a.b' -> 'a' -> null.
   String? get trn => TrDelegate.instance.translate(this);
 
-  ///Converts this String to [Locale]. Separators: _ , - , + , . , / , | , \ and space.
+  /// Translates this key with arguments. Pattern: 'a.b.c' -> 'a.b' -> 'a' -> this.
+  String trArgs(List<String> args) {
+    final translation = trnArgs(args);
+
+    if (translation == null) {
+      TrDelegate.instance._print('Missing translation: $this');
+      TrDelegate.instance.missingTranslations.add(this);
+    }
+
+    return translation ?? this;
+  }
+
+  /// Translates this key with arguments. Pattern: 'a.b.c' -> 'a.b' -> 'a' -> null.
+  String? trnArgs(List<String> args) {
+    return TrDelegate.instance.translate(this, args: args);
+  }
+
+  /// Converts this String to [Locale]. Separators: _ , - , + , . , / , | , \ and space.
   Locale toLocale() {
     final parts = split(RegExp(r'[_\-\s\.\/|+\\]'));
     if (parts.length == 2) {
@@ -32,7 +48,7 @@ extension TrExtension on String {
     }
   }
 
-  ///All sub words between [pattern]. Ex: 'a.b.c' -> ['a.b.c','a.b','a'].
+  /// All sub words between [pattern]. Ex: 'a.b.c' -> ['a.b.c','a.b','a'].
   List<String> subWords(Pattern pattern) {
     final words = split(pattern);
     final nestedStrings = <String>[];

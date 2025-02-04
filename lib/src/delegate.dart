@@ -115,7 +115,7 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
   }
 
   ///Translates [key]. Fallbacks to subkeys.
-  String? translate(String key) {
+  String? translate(String key, {List<String>? args}) {
     final keys = key.subWords(RegExp(r'\.(?!\s)'));
 
     //checking locale.
@@ -135,7 +135,7 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
       final replacers = _translationsArgs[code]?[key];
 
       if (replacers != null && keys.first != key) {
-        final args =
+        args ??=
             keys.first.replaceFirst('$key.', '').split(RegExp(r'\.(?!\s)'));
         final replaced = replacers[args.length]?.call(args);
 

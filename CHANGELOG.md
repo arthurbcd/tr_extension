@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.9.0 - Fev 04, 2025
+
+- Added `args` parameter to `TrDelegate.translate`.
+- Added `trArgs/trnArgs` String extension to manually pass arguments.
+
 ## 0.8.0 - Jan 30, 2025
 
 - Now you can setup `TrDelegate` as a list or element.
