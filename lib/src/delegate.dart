@@ -161,8 +161,7 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
     final files = manifestMap.keys
-        .where((key) => key.contains(path))
-        .where((key) => key.endsWith('.json'));
+        .where((key) => key.startsWith(path) && key.endsWith('.json'));
 
     if (files.isNotEmpty) {
       _print('Translation files found: $files');

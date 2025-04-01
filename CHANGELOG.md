@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.9.2 - Apr 01, 2025
+
+- Fix `TrDelegate.path` conflicts with external packages.
+
 ## 0.9.1 - Fev 05, 2025
 
 - Force args translation when manually set.
