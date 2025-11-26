@@ -11,12 +11,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: TrDelegate().toList(),
+      localizationsDelegates: TrDelegate(),
       locale: context.locale,
-      supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('pt', 'BR'),
-      ],
+      supportedLocales: const [Locale('en', 'US'), Locale('pt', 'BR')],
       home: const Home(),
     );
   }
@@ -42,14 +39,15 @@ class Home extends StatelessWidget {
             Text('1200000000.4'.compactSimpleCurrency()),
             Text('1200000000.4'.compactCurrency()),
             ElevatedButton(
-                onPressed: () {
-                  final locale = context.locale == const Locale('pt', 'BR')
-                      ? const Locale('en', 'US')
-                      : const Locale('pt', 'BR');
+              onPressed: () {
+                final locale = context.locale == const Locale('pt', 'BR')
+                    ? const Locale('en', 'US')
+                    : const Locale('pt', 'BR');
 
-                  context.setLocale(locale);
-                },
-                child: Text('change_language'.tr))
+                context.setLocale(locale);
+              },
+              child: Text('change_language'.tr),
+            ),
           ],
         ),
       ),

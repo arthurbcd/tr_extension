@@ -31,16 +31,18 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
   /// - [alwaysUseUtcFormat]: If true, all date/time formats will be in UTC, ignoring the current locale.
   ///
   factory TrDelegate({
-    String path = 'assets/translations',
+    String? path = 'assets/translations',
     void Function(String message)? log = _defaultLogger,
     bool reloadOnHotReload = true,
     bool alwaysUseUtcFormat = false,
+    Translations? translations,
   }) {
     if (reloadOnHotReload && kDebugMode) {
       instance.reload(cache: false);
     }
     return instance
       .._path = path
+      .._trs = translations
       .._log = log
       .._alwaysUseUtcFormat = alwaysUseUtcFormat;
   }
@@ -49,7 +51,8 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
   static _defaultLogger(String message) => dev.log(message, name: 'tr');
 
   // Configs.
-  String _path = 'assets/translations';
+  String? _path = 'assets/translations';
+  Translations? _trs;
   bool _alwaysUseUtcFormat = false;
   void Function(String message)? _log;
   void _print(String message) => _log?.call(message);
@@ -68,13 +71,19 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
   }
 
   /// All translations loaded.
-  Translations get translations => Map.of(_translations);
+  Translations get translations => {
+    for (final code in supportedLocales.map((e) => e.toString()))
+      code: {...?_translations[code], ...?_trs?[code]},
+  };
 
   /// All currently missing translations.
   Set<String> get missingTranslations => Set.of(_missingTranslations);
 
   /// All supported [Locale] gotten from [_path] files or via [setTranslations].
-  Set<Locale> get supportedLocales => _localizedFiles.keys.toSet();
+  Set<Locale> get supportedLocales => {
+    ..._localizedFiles.keys,
+    ...?_trs?.keys.map((e) => e.toLocale()),
+  };
 
   /// Whether the date/time format should always be in UTC.
   bool get alwaysUseUtcFormat => _alwaysUseUtcFormat;
@@ -135,14 +144,21 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
       final replacers = _translationsArgs[code]?[key];
 
       if (replacers != null && keys.first != key) {
-        args ??=
-            keys.first.replaceFirst('$key.', '').split(RegExp(r'\.(?!\s)'));
+        args ??= keys.first
+            .replaceFirst('$key.', '')
+            .split(RegExp(r'\.(?!\s)'));
         final replaced = replacers[args.length]?.call(args);
 
         if (replaced != null) return replaced; //found.
       }
 
-      var translation = _translations[code]?[key];
+      var translation =
+          _translations[code]?[key] ??
+          _trs?[locale.toString()]?[key] ??
+          _trs?[locale.languageCode]?[key] ??
+          _trs?[_trs?.keys
+              .where((k) => k.startsWith(locale.languageCode))
+              .firstOrNull]?[key];
 
       for (final arg in args ?? []) {
         translation = translation?.replaceFirst(RegExp(r'\{.*?\}'), arg);
@@ -154,20 +170,20 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
   }
 
   ///Load all locales from asset [path].
-  Future<Set<Locale>> _loadLocales(String path) async {
-    if (_localizedFiles.isNotEmpty) return supportedLocales;
+  Future<Set<Locale>> _loadLocales(String? path) async {
+    if (path == null || _localizedFiles.isNotEmpty) return supportedLocales;
 
-    final manifestContent = await rootBundle.loadString('AssetManifest.json');
-    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-
-    final files = manifestMap.keys
-        .where((key) => key.startsWith(path) && key.endsWith('.json'));
+    final assetManifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final files = assetManifest.listAssets().where(
+      (key) => key.startsWith(path) && key.endsWith('.json'),
+    );
 
     if (files.isNotEmpty) {
       _print('Translation files found: $files');
-    } else {
+    } else if (_trs == null || _trs!.isEmpty) {
       _print(
-          'No translation files in $path. Did you declare this path on pubspec.yaml?');
+        'No translation files in $path or Translations map. Did you declare this path on pubspec.yaml?',
+      );
     }
 
     for (final file in files) {
@@ -231,15 +247,18 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
     if (_reloading || _locale == null) return;
     _reloading = true;
 
-    await _loadByLocale(_locale!, cache: cache)
-        .then((_) => _refreshApp?.call())
-        .whenComplete(() {
+    await _loadByLocale(
+      _locale!,
+      cache: cache,
+    ).then((_) => _refreshApp?.call()).whenComplete(() {
       WidgetsBinding.instance.addPostFrameCallback((_) => _reloading = false);
     });
 
     if (_refreshApp == null) {
-      _print('Currently running is read mode. In order to update the UI '
-          'while changing language, set context.locale on MaterialApp');
+      _print(
+        'Currently running is read mode. In order to update the UI '
+        'while changing language, set context.locale on MaterialApp',
+      );
     } else {
       _print('$_locale translations reloaded.');
     }
@@ -248,18 +267,19 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
   @override
   Future<TrDelegate> load(Locale locale) async {
     if (_locale == locale) return this;
+    _locale = locale;
 
     final locales = await _loadLocales(_path);
-    final hasLocale = locales.contains(_locale = locale);
+    final hasLocale =
+        locales.contains(locale) ||
+        locales.any((l) => l.languageCode == locale.languageCode);
     Intl.defaultLocale = locale.toString();
 
     if (hasLocale) {
       await _loadByLocale(locale, cache: true);
     }
-    assert(
-      hasLocale,
-      '''Locale $locale not found in $_path
-      
+    assert(hasLocale, '''Locale $locale not found in $_path or Translations map.
+
       Did you declare this path on pubspec.yaml?
 
       Make sure to set the supportedLocales on MaterialApp:
@@ -280,8 +300,7 @@ class TrDelegate extends ListBase<LocalizationsDelegate>
 
       Supported separators:
       _ , - , + , . , / , | ,  and space.
-      ''',
-    );
+      ''');
     return this;
   }
 

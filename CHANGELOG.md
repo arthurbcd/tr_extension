@@ -2,6 +2,12 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.10.0 - Nov 26, 2025
+
+- Now supports a `TrDelagate.translations` map.
+- Migrated `AssetManifest` approach.
+- Bump dart `3.10.0`.
+
 ## 0.9.2 - Apr 01, 2025
 
 - Fix `TrDelegate.path` conflicts with external packages.
